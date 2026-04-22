@@ -239,8 +239,11 @@ export function makeBlankEmployee(id: string, region: Region = 1): EmployeeInput
   };
 }
 
-/** Tính các phụ cấp tự động theo cấp + Agreed Gross + ngày công.
- *  Bonus = AgreedGross * (công/công chuẩn) - (transport + phone + attendance + housing).
+/** Tính các phụ cấp tự động theo cấp + ngày công.
+ *  - Xăng/Điện thoại: theo cấp nhân sự.
+ *  - Chuyên cần = Contracted Salary × attendanceRatio.
+ *  - Housing    = Contracted Salary × housingRatio.
+ *  - Bonus      = Agreed Gross × (công/công chuẩn) − (transport + phone + attendance + housing).
  *  Bonus có thể âm. Lunch KHÔNG nằm trong công thức bonus. */
 export function computeAutoAllowances(emp: EmployeeInput, cfg: PayrollConfig): AutoAllowances {
   if (!emp.level) {
