@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
-  calculatePayroll, formatVND, makeBlankEmployee, EMPLOYEE_LEVELS,
+  calculatePayroll, formatVND, makeBlankEmployee, EMPLOYEE_LEVELS, computeLevelDefaults,
   type EmployeeInput, type PayrollConfig, type Region, type ContractType, type EmployeeLevel,
 } from "@/lib/payroll";
 import {
