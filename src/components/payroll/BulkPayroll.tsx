@@ -51,6 +51,15 @@ export function BulkPayroll({ config }: Props) {
       if (key === "totalWorkingDays") {
         next.lunchAllowance = Math.max(0, Number(value) || 0) * config.lunchPerDay;
       }
+      // Auto-fill phụ cấp khi đổi Cấp nhân sự
+      if (key === "level" && value) {
+        const d = computeLevelDefaults(next, config);
+        next.transportationAllowance = d.transportation;
+        next.fixedPhoneAllowance = d.phone;
+        next.attendanceBonus = d.attendance;
+        next.housingNonTaxable = d.housing;
+        next.performanceBonus = d.performanceBonus;
+      }
       return next;
     }));
 
