@@ -133,8 +133,35 @@ export function SingleCalculator({ config }: Props) {
       if (key === "totalWorkingDays") {
         next.lunchAllowance = Math.max(0, Number(value) || 0) * config.lunchPerDay;
       }
+      // Auto-fill phụ cấp khi đổi Cấp nhân sự (chỉ 1 lần khi đổi cấp).
+      // Sau khi fill, user có thể chỉnh tay từng ô; engine không cộng auto nữa.
+      if (key === "level" && value) {
+        const d = computeLevelDefaults(next, config);
+        next.transportationAllowance = d.transportation;
+        next.fixedPhoneAllowance = d.phone;
+        next.attendanceBonus = d.attendance;
+        next.housingNonTaxable = d.housing;
+        next.performanceBonus = d.performanceBonus;
+      }
       return next;
     });
+
+  // Áp dụng lại theo cấp (nút bấm) — tính lại Bonus dựa trên các ô hiện tại
+  const reapplyLevelDefaults = () => {
+    setEmp((p) => {
+      if (!p.level) return p;
+      const d = computeLevelDefaults(p, config);
+      return {
+        ...p,
+        transportationAllowance: d.transportation,
+        fixedPhoneAllowance: d.phone,
+        attendanceBonus: d.attendance,
+        housingNonTaxable: d.housing,
+        performanceBonus: d.performanceBonus,
+      };
+    });
+    toast.success("Đã áp dụng lại phụ cấp theo cấp");
+  };
 
   // Đồng bộ lunch khi đơn giá trong config thay đổi
   useEffect(() => {
