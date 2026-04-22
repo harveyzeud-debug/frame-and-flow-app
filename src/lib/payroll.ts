@@ -46,8 +46,8 @@ export interface PayrollConfig {
 
   // === Mới: Phụ cấp tự động theo cấp nhân sự ===
   levelAllowances: Record<EmployeeLevel, LevelAllowanceRow>;
-  attendanceRatio: number; // Chuyên cần = % Agreed Gross
-  housingRatio: number;    // Housing = % Agreed Gross
+  attendanceRatio: number; // Chuyên cần = % Contracted Salary
+  housingRatio: number;    // Housing = % Contracted Salary
 
   // Cờ chịu thuế cho từng khoản phụ cấp tự động
   taxableFlags: {
@@ -239,8 +239,11 @@ export function makeBlankEmployee(id: string, region: Region = 1): EmployeeInput
   };
 }
 
-/** Tính các phụ cấp tự động theo cấp + Agreed Gross + ngày công.
- *  Bonus = AgreedGross * (công/công chuẩn) - (transport + phone + attendance + housing).
+/** Tính các phụ cấp tự động theo cấp + ngày công.
+ *  - Xăng/Điện thoại: theo cấp nhân sự.
+ *  - Chuyên cần = Contracted Salary × attendanceRatio.
+ *  - Housing    = Contracted Salary × housingRatio.
+ *  - Bonus      = Agreed Gross × (công/công chuẩn) − (transport + phone + attendance + housing).
  *  Bonus có thể âm. Lunch KHÔNG nằm trong công thức bonus. */
 export function computeAutoAllowances(emp: EmployeeInput, cfg: PayrollConfig): AutoAllowances {
   if (!emp.level) {
@@ -249,8 +252,9 @@ export function computeAutoAllowances(emp: EmployeeInput, cfg: PayrollConfig): A
   const row = cfg.levelAllowances[emp.level];
   const transportation = row?.transportation ?? 0;
   const phone = row?.phone ?? 0;
-  const attendance = emp.agreedGrossSalary * cfg.attendanceRatio;
-  const housing = emp.agreedGrossSalary * cfg.housingRatio;
+  // Chuyên cần & Housing tính trên Contracted Salary (lương HĐ), KHÔNG dùng Agreed Gross
+  const attendance = emp.contractSalary * cfg.attendanceRatio;
+  const housing = emp.contractSalary * cfg.housingRatio;
 
   const standardDays = emp.standardWorkingDays && emp.standardWorkingDays > 0
     ? emp.standardWorkingDays
