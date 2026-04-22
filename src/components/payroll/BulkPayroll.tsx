@@ -105,7 +105,7 @@ export function BulkPayroll({ config }: Props) {
       "Housing (T)": Math.round(res.taxableBreakdown.housing),
       "OT": Math.round(res.taxableBreakdown.ot),
       "Khác (T)": Math.round(res.taxableBreakdown.other),
-      "Khác (T)": Math.round(res.taxableBreakdown.other),
+      "Total Taxable Benefits": Math.round(res.totalTaxableBenefits),
       "Gross Income": Math.round(res.grossIncome),
       "Taxable Income": Math.round(res.taxableIncomeGross),
       "BHXH 8%": Math.round(res.bhxhEmp),
